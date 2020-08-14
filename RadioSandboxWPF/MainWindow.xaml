@@ -5,8 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RadioSandboxWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        DataContext="{Binding MainViewModel, Source={StaticResource Locator}}"
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
     <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Label x:Name="testLbl"
+               Grid.Row="0" 
+               Grid.Column="0" 
+               Content="{Binding TestString, Mode=TwoWay}"/>
+        
+        <Image x:Name="spectrographImage"              
+               Grid.Row="1" Grid.RowSpan="2"
+               Grid.Column="1" Grid.ColumnSpan="2"/>
 
     </Grid>
 </Window>
