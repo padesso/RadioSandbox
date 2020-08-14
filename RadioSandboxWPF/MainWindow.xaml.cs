@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace RadioSandboxWPF
 {
@@ -31,7 +32,7 @@ namespace RadioSandboxWPF
         private Spectrogram.Spectrogram spec;
         private Listener listener;
 
-        private System.Timers.Timer timer;
+        private DispatcherTimer timer;
 
         public MainWindow()
         {
@@ -59,70 +60,72 @@ namespace RadioSandboxWPF
             //    cbColormap.Items.Add(cmap.Name);
             //cbColormap.SelectedIndex = cbColormap.Items.IndexOf("Viridis");
 
-            timer = new System.Timers.Timer(500);
-            timer.Elapsed += Timer_Elapsed;
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(500);
+            timer.IsEnabled = true;
+            timer.Tick += Timer_Tick; ;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            spectrographImage.Source = BitmapToImageSource(spec.GetBitmap());
-            StartListening();
-        }
-
-        private void StartListening()
-        {
-            int sampleRate = 6000;
-            int fftSize = 1 << (9 + cbFftSize.SelectedIndex);
-            int stepSize = fftSize / 20;
-
-            pbSpectrogram.Image?.Dispose();
-            pbSpectrogram.Image = null;
-            listener?.Dispose();
-            listener = new Listener(cbDevice.SelectedIndex, sampleRate);
-            spec = new Spectrogram(sampleRate, fftSize, stepSize);
-            //spec.SetWindow(FftSharp.Window.Rectangular(fftSize));
-            pbSpectrogram.Height = spec.Height;
-
-            pbScaleVert.Image?.Dispose();
-            pbScaleVert.Image = spec.GetVerticalScale(pbScaleVert.Width);
-            pbScaleVert.Height = spec.Height;
-        }
-
-        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
             double[] newAudio = listener.GetNewAudio();
             spec.Add(newAudio, process: false);
 
-            double multiplier = tbBrightness.Value / 20.0;
+            double multiplier = 1 / 20.0; //TODO tbBrightness.Value / 20.0;
 
             if (spec.FftsToProcess > 0)
             {
                 Stopwatch sw = Stopwatch.StartNew();
                 spec.Process();
-                spec.SetFixedWidth(pbSpectrogram.Width);
+                spec.SetFixedWidth((int)spectrographImage.Width);
                 Bitmap bmpSpec = new Bitmap(spec.Width, spec.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-                using (var bmpSpecIndexed = spec.GetBitmap(multiplier, cbDecibels.Checked, cbRoll.Checked))
+                using (var bmpSpecIndexed = spec.GetBitmap(multiplier, true, true)) //TODO cbDecibels.Checked, cbRoll.Checked))
                 using (var gfx = Graphics.FromImage(bmpSpec))
-                using (var pen = new Pen(Color.White))
+                using (var pen = new System.Drawing.Pen(System.Drawing.Color.White))
                 {
                     gfx.DrawImage(bmpSpecIndexed, 0, 0);
-                    if (cbRoll.Checked)
-                    {
-                        gfx.DrawLine(pen, spec.NextColumnIndex, 0, spec.NextColumnIndex, pbSpectrogram.Height);
-                    }
+                    //if (true) //TODO: cbRoll.Checked)
+                    //{
+                    //    gfx.DrawLine(pen, spec.NextColumnIndex, 0, spec.NextColumnIndex, (int)spectrographImage.Height);
+                    //}
                 }
                 sw.Stop();
-                pbSpectrogram.Image?.Dispose();
-                pbSpectrogram.Image = bmpSpec;
-                lblStatus3.Text = $"Render time: {sw.ElapsedMilliseconds:D2} ms";
-                lblStatus4.Text = $"Peak (Hz): {spec.GetPeak().freqHz:N0}";
+                //spectrographImage.Source?.Dispose();
+                spectrographImage.Source = BitmapToImageSource(bmpSpec);
+                //lblStatus3.Text = $"Render time: {sw.ElapsedMilliseconds:D2} ms";
+                //lblStatus4.Text = $"Peak (Hz): {spec.GetPeak().freqHz:N0}";
             }
 
-            lblStatus1.Text = $"Time: {listener.TotalTimeSec:N3} sec";
-            lblStatus2.Text = $"FFTs processed: {spec.FftsProcessed:N0}";
-            pbAmplitude.Value = (int)(listener.AmplitudeFrac * pbAmplitude.Maximum);
+            //lblStatus1.Text = $"Time: {listener.TotalTimeSec:N3} sec";
+            //lblStatus2.Text = $"FFTs processed: {spec.FftsProcessed:N0}";
+            //pbAmplitude.Value = (int)(listener.AmplitudeFrac * pbAmplitude.Maximum);
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            StartListening();
+            //spectrographImage.Source = BitmapToImageSource(spec.GetBitmap());        
+            timer.Start();
+        }
+
+        private void StartListening()
+        {
+            int sampleRate = 6000;
+            int fftSize = 1 << (9 + 0); //TODO cbFftSize.SelectedIndex);
+            int stepSize = fftSize / 20;
+
+            //spectrographImage.Source.Dispose();
+            spectrographImage.Source = null;
+            listener?.Dispose();
+            listener = new Listener(0, sampleRate); //TODO cbDevice.SelectedIndex, sampleRate);
+            spec = new Spectrogram.Spectrogram(sampleRate, fftSize, stepSize);
+            //spec.SetWindow(FftSharp.Window.Rectangular(fftSize));
+            //pbSpectrogram.Height = spec.Height;
+
+            //pbScaleVert.Image?.Dispose();
+            //pbScaleVert.Image = spec.GetVerticalScale(pbScaleVert.Width);
+            //pbScaleVert.Height = spec.Height;
+        }
 
         BitmapImage BitmapToImageSource(Bitmap bitmap)
         {
