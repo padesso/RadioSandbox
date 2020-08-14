@@ -1,9 +1,11 @@
 ﻿<Application x:Class="RadioSandboxWPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:RadioSandboxWPF"
+             xmlns:local="clr-namespace:RadioSandboxWPF" xmlns:viewmodel="clr-namespace:RadioSandboxWPF.ViewModel"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <viewmodel:ViewModelLocator x:Key="Locator" xmlns:vm="clr-namespace:RadioSandboxWPF.ViewModel" />
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
