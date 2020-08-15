@@ -42,13 +42,27 @@
                    Content="{Binding Peak}"/>
         </StackPanel>
 
-        <ComboBox x:Name="devicesCbx"
+        <StackPanel Orientation="Vertical"
+                    Grid.Row="0" 
+                    Grid.Column="2"  Grid.ColumnSpan="2">  
+            
+            <ComboBox x:Name="devicesCbx"
                   Height="25"
                   Grid.Row="0" 
                   Grid.Column="2"  Grid.ColumnSpan="2"
                   DisplayMemberPath="ProductName"
                   ItemsSource="{Binding DeviceCapabilities}"
                   SelectedItem="{Binding SelectedDevice}"/>
+
+            <CheckBox x:Name="decibelsCx"
+                      Content="Decibels?"
+                      IsChecked="{Binding Decibels}"/>
+
+            <CheckBox x:Name="rollCx"
+                      Content="Roll?"
+                      IsChecked="{Binding Roll}"/>
+
+        </StackPanel>
 
         <Image x:Name="spectrogramImage"              
                Grid.Row="1" Grid.RowSpan="2"
