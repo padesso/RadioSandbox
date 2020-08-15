@@ -101,12 +101,21 @@ namespace RadioSandboxWPF.ViewModel
 
                 //SpectrogamImageSource.Dispose();
                 SpectrogamImageSource = ImageHelpers.BitmapToImageSource(bmpSpec);
+
+                RenderTime = $"Render time: {sw.ElapsedMilliseconds:D2} ms";
                 //lblStatus3.Text = $"Render time: {sw.ElapsedMilliseconds:D2} ms";
+
+                Peak = $"Peak (Hz): {spec.GetPeak().freqHz:N0}";
                 //lblStatus4.Text = $"Peak (Hz): {spec.GetPeak().freqHz:N0}";
             }
 
+            TotalTime = $"Time: {listener.TotalTimeSec:N3} sec";
             //lblStatus1.Text = $"Time: {listener.TotalTimeSec:N3} sec";
+
+            FftsProcessed = $"FFTs processed: {spec.FftsProcessed:N0}";
             //lblStatus2.Text = $"FFTs processed: {spec.FftsProcessed:N0}";
+
+            //TODO
             //pbAmplitude.Value = (int)(listener.AmplitudeFrac * pbAmplitude.Maximum);
         }
 

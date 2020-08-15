@@ -23,10 +23,22 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Label x:Name="testLbl"
-               Grid.Row="0" 
-               Grid.Column="0" 
-               Content="{Binding TestString, Mode=TwoWay}"/>
+        <StackPanel Orientation="Vertical"
+                    Grid.Row="0" 
+                    Grid.Column="0" >
+            
+            <Label x:Name="totalTimeLbl"               
+                   Content="{Binding TotalTime}"/>
+
+            <Label x:Name="fftProcessedLbl"               
+                   Content="{Binding FftsProcessed}"/>
+
+            <Label x:Name="renderTimeLbl"               
+                   Content="{Binding RenderTime}"/>
+
+            <Label x:Name="peakLbl"               
+                   Content="{Binding Peak}"/>
+        </StackPanel>
         
         <Image x:Name="spectrogramImage"              
                Grid.Row="1" Grid.RowSpan="2"
