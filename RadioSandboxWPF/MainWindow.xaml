@@ -25,7 +25,9 @@
 
         <StackPanel Orientation="Vertical"
                     Grid.Row="0" 
-                    Grid.Column="0" >
+                    Grid.Column="0" 
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch">
             
             <Label x:Name="totalTimeLbl"               
                    Content="{Binding TotalTime}"/>

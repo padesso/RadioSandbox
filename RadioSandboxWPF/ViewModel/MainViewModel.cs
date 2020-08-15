@@ -85,7 +85,7 @@ namespace RadioSandboxWPF.ViewModel
             {
                 Stopwatch sw = Stopwatch.StartNew();
                 spec.Process();
-                spec.SetFixedWidth((int)SpectrogamImageSource.Width);
+                //spec.SetFixedWidth((int)SpectrogamImageSource.Width);
                 Bitmap bmpSpec = new Bitmap(spec.Width, spec.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                 using (var bmpSpecIndexed = spec.GetBitmap(multiplier, Decibels, Roll))
                 using (var gfx = Graphics.FromImage(bmpSpec))
