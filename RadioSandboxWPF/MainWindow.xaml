@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:RadioSandboxWPF"
         mc:Ignorable="d"
         DataContext="{Binding MainViewModel, Source={StaticResource Locator}}"
-        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
+        Title="MainWindow" Height="450" Width="800">
     <Grid>
 
         <Grid.ColumnDefinitions>

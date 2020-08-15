@@ -39,7 +39,7 @@ namespace RadioSandboxWPF.ViewModel
             }
             else
             {
-                DeviceCapabilities.Clear();
+                DeviceCapabilities = new List<WaveInCapabilities>();
                 for (int i = 0; i < NAudio.Wave.WaveIn.DeviceCount; i++)
                     DeviceCapabilities.Add(NAudio.Wave.WaveIn.GetCapabilities(i));
                 SelectedDevice = DeviceCapabilities[0];
@@ -55,6 +55,7 @@ namespace RadioSandboxWPF.ViewModel
             timer.Tick += Timer_Tick;
 
             //TODO: move this somewhere else?
+            StartListening();
             timer.Start();
         }
 
@@ -63,7 +64,7 @@ namespace RadioSandboxWPF.ViewModel
             double[] newAudio = listener.GetNewAudio();
             spec.Add(newAudio, process: false);
 
-            double multiplier = 1 / 20.0; //TODO tbBrightness.Value / 20.0;
+            double multiplier = 1 / 20.0; //TODO: tbBrightness.Value / 20.0;
 
             if (spec.FftsToProcess > 0)
             {
@@ -92,6 +93,25 @@ namespace RadioSandboxWPF.ViewModel
             //lblStatus1.Text = $"Time: {listener.TotalTimeSec:N3} sec";
             //lblStatus2.Text = $"FFTs processed: {spec.FftsProcessed:N0}";
             //pbAmplitude.Value = (int)(listener.AmplitudeFrac * pbAmplitude.Maximum);
+        }
+
+        private void StartListening()
+        {
+            int sampleRate = 6000;
+            int fftSize = 1 << (9 + 0); //TODO cbFftSize.SelectedIndex);
+            int stepSize = fftSize / 20;
+
+            //spectrographImage.Source.Dispose();
+            SpectrogamImageSource = null;
+            listener?.Dispose();
+            listener = new Listener(0, sampleRate); //TODO cbDevice.SelectedIndex, sampleRate);
+            spec = new Spectrogram.Spectrogram(sampleRate, fftSize, stepSize);
+            spec.SetWindow(FftSharp.Window.Rectangular(fftSize));
+            //SpectrogamImageSource.Height = spec.Height;
+
+            //pbScaleVert.Image?.Dispose();
+            //pbScaleVert.Image = spec.GetVerticalScale(pbScaleVert.Width);
+            //pbScaleVert.Height = spec.Height;
         }
 
         public List<WaveInCapabilities> DeviceCapabilities
