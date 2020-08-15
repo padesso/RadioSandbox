@@ -46,13 +46,14 @@
                     Grid.Row="0" 
                     Grid.Column="2"  Grid.ColumnSpan="2">  
             
-            <ComboBox x:Name="devicesCbx"
-                  Height="25"
-                  Grid.Row="0" 
-                  Grid.Column="2"  Grid.ColumnSpan="2"
+            <ComboBox x:Name="devicesCbx"              
                   DisplayMemberPath="ProductName"
                   ItemsSource="{Binding DeviceCapabilities}"
                   SelectedItem="{Binding SelectedDevice}"/>
+
+            <ComboBox x:Name="colorMapCbx"              
+                  ItemsSource="{Binding ColorMaps}"
+                  SelectedItem="{Binding SelectedColorMap}"/>
 
             <CheckBox x:Name="decibelsCx"
                       Content="Decibels?"

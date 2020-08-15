@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Printing;
 using System.Text;
 using System.Windows.Media;
@@ -15,7 +16,6 @@ namespace RadioSandboxWPF.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        private Colormap[] cmaps;
         private Spectrogram.Spectrogram spec;
         private Listener listener;
 
@@ -24,8 +24,8 @@ namespace RadioSandboxWPF.ViewModel
         private List<string> fftSizes;
         private string selectedFftSize;
 
-        private List<string> colorMapNames;
-        private string selectedColorMapName;
+        private List<Colormap> colorMaps;
+        private Colormap selectedColorMap;
 
         private DispatcherTimer timer;
 
@@ -58,11 +58,8 @@ namespace RadioSandboxWPF.ViewModel
             FftSizes = new List<string>() { "512", "1024", "2048", "4096", "8192", "16384", "32768" };
             selectedFftSize = FftSizes[1];
 
-            colorMapNames = new List<string>();
-            cmaps = Colormap.GetColormaps();
-            foreach (Colormap cmap in cmaps)
-                colorMapNames.Add(cmap.Name);
-            SelectedColorMapName = colorMapNames[colorMapNames.IndexOf("Viridis")];
+            ColorMaps = Colormap.GetColormaps().ToList();
+            SelectedColorMap = ColorMaps.Where(c => c.Name == "Viridis").FirstOrDefault();
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
@@ -204,10 +201,16 @@ namespace RadioSandboxWPF.ViewModel
             set { peak = value; RaisePropertyChanged("Peak"); }
         }
 
-        public string SelectedColorMapName 
+        public Colormap SelectedColorMap 
         { 
-            get => selectedColorMapName;
-            set { selectedColorMapName = value; RaisePropertyChanged("SelectedColorMapName"); }
+            get => selectedColorMap;
+            set { selectedColorMap = value; RaisePropertyChanged("SelectedColorMap"); }
+        }
+
+        public List<Colormap> ColorMaps 
+        { 
+            get => colorMaps;
+            set { colorMaps = value; RaisePropertyChanged("ColorMaps"); }
         }
     }
 }
