@@ -62,7 +62,7 @@ namespace RadioSandboxWPF.ViewModel
             SelectedColorMap = ColorMaps.Where(c => c.Name == "Viridis").FirstOrDefault();
 
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(500);
+            timer.Interval = TimeSpan.FromMilliseconds(100);
             timer.IsEnabled = true;
             timer.Tick += Timer_Tick;
 
@@ -82,7 +82,9 @@ namespace RadioSandboxWPF.ViewModel
             {
                 Stopwatch sw = Stopwatch.StartNew();
                 spec.Process();
-                //spec.SetFixedWidth((int)SpectrogamImageSource.Width); //TODO
+                if (SpectrogamImageSource != null)
+                    spec.SetFixedWidth(500);// (int)SpectrogamImageSource.Width); 
+
                 Bitmap bmpSpec = new Bitmap(spec.Width, spec.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                 using (var bmpSpecIndexed = spec.GetBitmap(multiplier, Decibels, Roll))
                 using (var gfx = Graphics.FromImage(bmpSpec))
