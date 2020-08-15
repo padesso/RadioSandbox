@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Printing;
 using System.Text;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -29,6 +30,11 @@ namespace RadioSandboxWPF.ViewModel
         private bool roll;
 
         private ImageSource spectrogamImageSource;
+
+        private string totalTime;
+        private string fftsProcessed;
+        private string renderTime;
+        private string peak;
 
         public MainViewModel()
         {
@@ -154,6 +160,30 @@ namespace RadioSandboxWPF.ViewModel
         {
             get => spectrogamImageSource;
             set { spectrogamImageSource = value; RaisePropertyChanged("SpectrogamImageSource"); }
-    }
+        }
+
+        public string TotalTime 
+        { 
+            get => totalTime;
+            set { totalTime = value; RaisePropertyChanged("TotalTime"); }
+        }
+
+        public string FftsProcessed
+        {
+            get => fftsProcessed;
+            set { fftsProcessed = value; RaisePropertyChanged("FftsProcessed"); }
+        }
+
+        public string RenderTime
+        {
+            get => renderTime;
+            set { renderTime = value; RaisePropertyChanged("RenderTime"); }
+        }
+
+        public string Peak 
+        { 
+            get => peak;
+            set { peak = value; RaisePropertyChanged("Peak"); }
+        }
     }
 }
