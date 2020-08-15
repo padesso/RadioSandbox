@@ -55,7 +55,7 @@ namespace RadioSandboxWPF.ViewModel
             FftSizes = new List<string>() { "512", "1024", "2048", "4096", "8192", "16384", "32768" };
             selectedFftSize = FftSizes[1];
 
-            //cmaps = Colormap.GetColormaps();
+            cmaps = Colormap.GetColormaps();
             //foreach (Colormap cmap in cmaps)
             //    cbColormap.Items.Add(cmap.Name);
             //cbColormap.SelectedIndex = cbColormap.Items.IndexOf("Viridis");
