@@ -38,18 +38,18 @@ namespace RadioSandboxWPF
         {
             InitializeComponent();
 
-            if (NAudio.Wave.WaveIn.DeviceCount == 0)
-            {
-                Console.WriteLine("Error intializing wave in device.");
-                Close();
-            }
-            else
-            {
-                //cbDevice.Items.Clear();
-                //for (int i = 0; i < NAudio.Wave.WaveIn.DeviceCount; i++)
-                //    cbDevice.Items.Add(NAudio.Wave.WaveIn.GetCapabilities(i).ProductName);
-                //cbDevice.SelectedIndex = 0;
-            }
+            //if (NAudio.Wave.WaveIn.DeviceCount == 0)
+            //{
+            //    Console.WriteLine("Error intializing wave in device.");
+            //    Close();
+            //}
+            //else
+            //{
+            //    //cbDevice.Items.Clear();
+            //    //for (int i = 0; i < NAudio.Wave.WaveIn.DeviceCount; i++)
+            //    //    cbDevice.Items.Add(NAudio.Wave.WaveIn.GetCapabilities(i).ProductName);
+            //    //cbDevice.SelectedIndex = 0;
+            //}
 
             //for (int i = 9; i < 16; i++)
             //    cbFftSize.Items.Add($"2^{i} ({1 << i:N0})");
