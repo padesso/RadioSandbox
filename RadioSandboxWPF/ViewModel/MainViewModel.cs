@@ -24,6 +24,9 @@ namespace RadioSandboxWPF.ViewModel
         private List<string> fftSizes;
         private string selectedFftSize;
 
+        private List<string> colorMapNames;
+        private string selectedColorMapName;
+
         private DispatcherTimer timer;
 
         private bool decibels;
@@ -55,10 +58,11 @@ namespace RadioSandboxWPF.ViewModel
             FftSizes = new List<string>() { "512", "1024", "2048", "4096", "8192", "16384", "32768" };
             selectedFftSize = FftSizes[1];
 
+            colorMapNames = new List<string>();
             cmaps = Colormap.GetColormaps();
-            //foreach (Colormap cmap in cmaps)
-            //    cbColormap.Items.Add(cmap.Name);
-            //cbColormap.SelectedIndex = cbColormap.Items.IndexOf("Viridis");
+            foreach (Colormap cmap in cmaps)
+                colorMapNames.Add(cmap.Name);
+            SelectedColorMapName = colorMapNames[colorMapNames.IndexOf("Viridis")];
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
@@ -189,6 +193,12 @@ namespace RadioSandboxWPF.ViewModel
         { 
             get => peak;
             set { peak = value; RaisePropertyChanged("Peak"); }
+        }
+
+        public string SelectedColorMapName 
+        { 
+            get => selectedColorMapName;
+            set { selectedColorMapName = value; RaisePropertyChanged("SelectedColorMapName"); }
         }
     }
 }
