@@ -63,7 +63,7 @@ namespace RadioSandboxWPF
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
             timer.IsEnabled = true;
-            timer.Tick += Timer_Tick; ;
+            timer.Tick += Timer_Tick;
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -77,7 +77,7 @@ namespace RadioSandboxWPF
             {
                 Stopwatch sw = Stopwatch.StartNew();
                 spec.Process();
-                spec.SetFixedWidth((int)spectrographImage.Width);
+                spec.SetFixedWidth((int)spectrogramImage.Width);
                 Bitmap bmpSpec = new Bitmap(spec.Width, spec.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                 using (var bmpSpecIndexed = spec.GetBitmap(multiplier, true, true)) //TODO cbDecibels.Checked, cbRoll.Checked))
                 using (var gfx = Graphics.FromImage(bmpSpec))
@@ -91,7 +91,7 @@ namespace RadioSandboxWPF
                 }
                 sw.Stop();
                 //spectrographImage.Source?.Dispose();
-                spectrographImage.Source = BitmapToImageSource(bmpSpec);
+                spectrogramImage.Source = BitmapToImageSource(bmpSpec);
                 //lblStatus3.Text = $"Render time: {sw.ElapsedMilliseconds:D2} ms";
                 //lblStatus4.Text = $"Peak (Hz): {spec.GetPeak().freqHz:N0}";
             }
@@ -115,7 +115,7 @@ namespace RadioSandboxWPF
             int stepSize = fftSize / 20;
 
             //spectrographImage.Source.Dispose();
-            spectrographImage.Source = null;
+            spectrogramImage.Source = null;
             listener?.Dispose();
             listener = new Listener(0, sampleRate); //TODO cbDevice.SelectedIndex, sampleRate);
             spec = new Spectrogram.Spectrogram(sampleRate, fftSize, stepSize);
