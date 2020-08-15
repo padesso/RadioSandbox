@@ -41,7 +41,15 @@
             <Label x:Name="peakLbl"               
                    Content="{Binding Peak}"/>
         </StackPanel>
-        
+
+        <ComboBox x:Name="devicesCbx"
+                  Height="25"
+                  Grid.Row="0" 
+                  Grid.Column="2"  Grid.ColumnSpan="2"
+                  DisplayMemberPath="ProductName"
+                  ItemsSource="{Binding DeviceCapabilities}"
+                  SelectedItem="{Binding SelectedDevice}"/>
+
         <Image x:Name="spectrogramImage"              
                Grid.Row="1" Grid.RowSpan="2"
                Grid.Column="1" Grid.ColumnSpan="2"
