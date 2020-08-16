@@ -70,21 +70,24 @@
 
         </StackPanel>
 
-        <Image x:Name="spectrogramImage"              
-               Grid.Row="1" Grid.RowSpan="2"
-               Grid.Column="1" Grid.ColumnSpan="2"
-               Source="{Binding SpectrogamImageSource}"/>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="1" Grid.RowSpan="2"
+                    Grid.Column="0" Grid.ColumnSpan="4">
+
+            <Image x:Name="spectrogramImage"  
+                       Height="{Binding SpectrogramHeight}"
+                       Source="{Binding SpectrogamImageSource}"/>
+
+            <Image x:Name="verticalScaleImage"              
+                       Height="{Binding SpectrogramHeight}"
+                       Source="{Binding VerticalScaleImageSource}"/>
+        </StackPanel>
 
         <ProgressBar x:Name="amplitudePB"
                     Grid.Row="1" Grid.RowSpan="2"
-                    Grid.Column="3" 
+                    Grid.Column="4" 
                     Orientation="Vertical"
                     Value="{Binding Amplitude}"/>
-
-        <Image x:Name="verticalScaleImage"              
-               Grid.Row="1" Grid.RowSpan="2"
-               Grid.Column="4" 
-               Source="{Binding VerticalScaleImageSource}"/>
 
     </Grid>
 </Window>

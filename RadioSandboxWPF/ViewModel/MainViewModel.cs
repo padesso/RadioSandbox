@@ -32,6 +32,7 @@ namespace RadioSandboxWPF.ViewModel
         private bool decibels;
         private bool roll;
 
+        private int spectrogramHeight;
         private ImageSource spectrogamImageSource;
         private ImageSource verticalScaleImageSource;
 
@@ -85,8 +86,8 @@ namespace RadioSandboxWPF.ViewModel
             {
                 Stopwatch sw = Stopwatch.StartNew();
                 spec.Process();
-                if (SpectrogamImageSource != null)
-                    spec.SetFixedWidth(500);// (int)SpectrogamImageSource.Width); 
+                //if (SpectrogamImageSource != null)
+                spec.SetFixedWidth(500);// (int)SpectrogamImageSource.Width); 
 
                 Bitmap bmpSpec = new Bitmap(spec.Width, spec.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                 using (var bmpSpecIndexed = spec.GetBitmap(multiplier, Decibels, Roll))
@@ -103,6 +104,7 @@ namespace RadioSandboxWPF.ViewModel
 
                 //SpectrogamImageSource.Dispose();
                 SpectrogamImageSource = ImageHelpers.BitmapToImageSource(bmpSpec);
+                VerticalScaleImageSource = ImageHelpers.BitmapToImageSource(spec.GetVerticalScale(75));
 
                 RenderTime = $"Render time: {sw.ElapsedMilliseconds:D2} ms";
                 Peak = $"Peak (Hz): {spec.GetPeak().freqHz:N0}";
@@ -124,13 +126,14 @@ namespace RadioSandboxWPF.ViewModel
             //spectrographImage.Source.Dispose();
             SpectrogamImageSource = null;
             listener?.Dispose();
-            listener = new Listener(0, sampleRate); //TODO cbDevice.SelectedIndex, sampleRate);
+            listener = new Listener(0, sampleRate); //TODO: support changes to devices... cbDevice.SelectedIndex, sampleRate);
             spec = new Spectrogram.Spectrogram(sampleRate, fftSize, stepSize);
             spec.SetWindow(FftSharp.Window.Rectangular(fftSize));
-            //SpectrogamImageSource.Height = spec.Height;
+            SpectrogramHeight = spec.Height;
 
             //pbScaleVert.Image?.Dispose();
-            //pbScaleVert.Image = spec.GetVerticalScale(pbScaleVert.Width);
+            VerticalScaleImageSource = null;
+            VerticalScaleImageSource = ImageHelpers.BitmapToImageSource(spec.GetVerticalScale(50)); //TODO: not hardcode the width
             //pbScaleVert.Height = spec.Height;
         }
 
@@ -222,6 +225,12 @@ namespace RadioSandboxWPF.ViewModel
         { 
             get => verticalScaleImageSource;
             set { verticalScaleImageSource = value; RaisePropertyChanged("VerticalScaleImageSource"); }
+        }
+
+        public int SpectrogramHeight 
+        { 
+            get => spectrogramHeight;
+            set { spectrogramHeight = value; RaisePropertyChanged("SpectrogramHeight"); }
         }
     }
 }
