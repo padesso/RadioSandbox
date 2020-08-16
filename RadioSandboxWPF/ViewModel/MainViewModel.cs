@@ -39,6 +39,8 @@ namespace RadioSandboxWPF.ViewModel
         private string renderTime;
         private string peak;
 
+        private int amplitude;
+
         public MainViewModel()
         {
             //Setup the audio input
@@ -102,20 +104,15 @@ namespace RadioSandboxWPF.ViewModel
                 SpectrogamImageSource = ImageHelpers.BitmapToImageSource(bmpSpec);
 
                 RenderTime = $"Render time: {sw.ElapsedMilliseconds:D2} ms";
-                //lblStatus3.Text = $"Render time: {sw.ElapsedMilliseconds:D2} ms";
-
                 Peak = $"Peak (Hz): {spec.GetPeak().freqHz:N0}";
-                //lblStatus4.Text = $"Peak (Hz): {spec.GetPeak().freqHz:N0}";
             }
 
             TotalTime = $"Time: {listener.TotalTimeSec:N3} sec";
-            //lblStatus1.Text = $"Time: {listener.TotalTimeSec:N3} sec";
-
             FftsProcessed = $"FFTs processed: {spec.FftsProcessed:N0}";
-            //lblStatus2.Text = $"FFTs processed: {spec.FftsProcessed:N0}";
 
             //TODO
             //pbAmplitude.Value = (int)(listener.AmplitudeFrac * pbAmplitude.Maximum);
+            Amplitude = (int)(listener.AmplitudeFrac * 100); //TODO: UI for setting max? pbAmplitude.Maximum);
         }
 
         private void StartListening()
@@ -213,6 +210,12 @@ namespace RadioSandboxWPF.ViewModel
         { 
             get => colorMaps;
             set { colorMaps = value; RaisePropertyChanged("ColorMaps"); }
+        }
+
+        public int Amplitude 
+        { 
+            get => amplitude;
+            set { amplitude = value; RaisePropertyChanged("Amplitude"); }
         }
     }
 }
