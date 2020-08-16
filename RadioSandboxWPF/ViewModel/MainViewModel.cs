@@ -33,6 +33,7 @@ namespace RadioSandboxWPF.ViewModel
         private bool roll;
 
         private ImageSource spectrogamImageSource;
+        private ImageSource verticalScaleImageSource;
 
         private string totalTime;
         private string fftsProcessed;
@@ -215,6 +216,12 @@ namespace RadioSandboxWPF.ViewModel
         { 
             get => amplitude;
             set { amplitude = value; RaisePropertyChanged("Amplitude"); }
+        }
+
+        public ImageSource VerticalScaleImageSource 
+        { 
+            get => verticalScaleImageSource;
+            set { verticalScaleImageSource = value; RaisePropertyChanged("VerticalScaleImageSource"); }
         }
     }
 }

@@ -13,7 +13,8 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="75"/>
+            <ColumnDefinition Width="75"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -44,7 +45,7 @@
 
         <StackPanel Orientation="Vertical"
                     Grid.Row="0" 
-                    Grid.Column="2"  Grid.ColumnSpan="2">  
+                    Grid.Column="2"  Grid.ColumnSpan="3">  
             
             <ComboBox x:Name="devicesCbx"              
                   DisplayMemberPath="ProductName"
@@ -79,6 +80,11 @@
                     Grid.Column="3" 
                     Orientation="Vertical"
                     Value="{Binding Amplitude}"/>
+
+        <Image x:Name="verticalScaleImage"              
+               Grid.Row="1" Grid.RowSpan="2"
+               Grid.Column="4" 
+               Source="{Binding VerticalScaleImageSource}"/>
 
     </Grid>
 </Window>
