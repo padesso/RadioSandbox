@@ -75,8 +75,9 @@
                Source="{Binding SpectrogamImageSource}"/>
 
         <ProgressBar x:Name="amplitudePB"
-                    Grid.Row="3"
-                    Grid.Column="1" Grid.ColumnSpan="2"
+                    Grid.Row="1" Grid.RowSpan="2"
+                    Grid.Column="3" 
+                    Orientation="Vertical"
                     Value="{Binding Amplitude}"/>
 
     </Grid>

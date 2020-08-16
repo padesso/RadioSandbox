@@ -110,9 +110,8 @@ namespace RadioSandboxWPF.ViewModel
             TotalTime = $"Time: {listener.TotalTimeSec:N3} sec";
             FftsProcessed = $"FFTs processed: {spec.FftsProcessed:N0}";
 
-            //TODO
-            //pbAmplitude.Value = (int)(listener.AmplitudeFrac * pbAmplitude.Maximum);
-            Amplitude = (int)(listener.AmplitudeFrac * 100); //TODO: UI for setting max? pbAmplitude.Maximum);
+            //Default max on the progressbar is 100 so hardcoding it here for now
+            Amplitude = (int)(listener.AmplitudeFrac * 100);
         }
 
         private void StartListening()
