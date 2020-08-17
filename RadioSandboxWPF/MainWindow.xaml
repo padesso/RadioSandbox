@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:RadioSandboxWPF"
         mc:Ignorable="d"
         DataContext="{Binding MainViewModel, Source={StaticResource Locator}}"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="650" Width="1280">
     <Grid>
 
         <Grid.ColumnDefinitions>
@@ -18,8 +18,7 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="125"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -74,12 +73,13 @@
         </StackPanel>
 
         <Grid 
-            Grid.Row="1" Grid.RowSpan="2"
-            Grid.Column="0" Grid.ColumnSpan="4">
+            Grid.Row="1" 
+            Grid.Column="0" Grid.ColumnSpan="5">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="85"/>
+                <ColumnDefinition Width="85"/>
             </Grid.ColumnDefinitions>
             
             <Image x:Name="spectrogramImage" 
@@ -88,16 +88,18 @@
                     Source="{Binding SpectrogamImageSource}"/>
 
             <Image x:Name="verticalScaleImage"  
-                   Grid.Row="0"  Grid.Column="2"
+                   Grid.Row="0"  Grid.Column="1"
                     Height="{Binding SpectrogramHeight}"
                     Source="{Binding VerticalScaleImageSource}"/>
+
+            <ProgressBar x:Name="amplitudePB"
+                    Grid.Row="0" Grid.Column="2" 
+                    Orientation="Vertical"
+                         Height="{Binding SpectrogramHeight}"
+                    Value="{Binding Amplitude}"/>
         </Grid>
 
-        <ProgressBar x:Name="amplitudePB"
-                    Grid.Row="1" Grid.RowSpan="2"
-                    Grid.Column="4" 
-                    Orientation="Vertical"
-                    Value="{Binding Amplitude}"/>
+        
 
     </Grid>
 </Window>

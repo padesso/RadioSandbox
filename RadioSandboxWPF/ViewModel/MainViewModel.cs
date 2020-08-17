@@ -21,8 +21,8 @@ namespace RadioSandboxWPF.ViewModel
 
         private List<WaveInCapabilities> deviceCapabilities;
         private WaveInCapabilities selectedDevice;
-        private List<string> fftSizes;
-        private string selectedFftSize;
+        private List<int> fftSizes;
+        private int selectedFftSize;
 
         private List<Colormap> colorMaps;
         private Colormap selectedColorMap;
@@ -60,7 +60,7 @@ namespace RadioSandboxWPF.ViewModel
             }
 
             //Setup FFT size
-            FftSizes = new List<string>() { "512", "1024", "2048", "4096", "8192", "16384", "32768" };
+            FftSizes = new List<int>() { 512, 1024, 2048, 4096, 8192, 16384, 32768 };
             selectedFftSize = FftSizes[1];
 
             ColorMaps = Colormap.GetColormaps().ToList();
@@ -85,13 +85,12 @@ namespace RadioSandboxWPF.ViewModel
 
             double multiplier = Brightness / 20.0; 
 
-
             if (spec.FftsToProcess > 0)
             {
                 Stopwatch sw = Stopwatch.StartNew();
                 spec.Process();
                 //if (SpectrogamImageSource != null)
-                spec.SetFixedWidth(512);// (int)SpectrogamImageSource.Width); 
+                spec.SetFixedWidth(1024);// (int)SpectrogamImageSource.Width); 
 
                 Bitmap bmpSpec = new Bitmap(spec.Width, spec.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                 using (var bmpSpecIndexed = spec.GetBitmap(multiplier, Decibels, Roll))
@@ -129,10 +128,9 @@ namespace RadioSandboxWPF.ViewModel
         private void StartListening()
         {
             int sampleRate = 6000;
-            int fftSize = 1 << (9 + 0); //TODO cbFftSize.SelectedIndex);
+            int fftSize = SelectedFftSize;
             int stepSize = fftSize / 20;
 
-            //spectrographImage.Source.Dispose();
             SpectrogamImageSource = null;
             listener?.Dispose();
             listener = new Listener(0, sampleRate); //TODO: support changes to devices... cbDevice.SelectedIndex, sampleRate);
@@ -140,10 +138,8 @@ namespace RadioSandboxWPF.ViewModel
             spec.SetWindow(FftSharp.Window.Rectangular(fftSize));
             SpectrogramHeight = spec.Height;
 
-            //pbScaleVert.Image?.Dispose();
             VerticalScaleImageSource = null;
-            VerticalScaleImageSource = ImageHelpers.BitmapToImageSource(spec.GetVerticalScale(50)); //TODO: not hardcode the width
-            //pbScaleVert.Height = spec.Height;
+            VerticalScaleImageSource = ImageHelpers.BitmapToImageSource(spec.GetVerticalScale(75)); //TODO: not hardcode the width
         }
 
         public List<WaveInCapabilities> DeviceCapabilities
@@ -158,16 +154,21 @@ namespace RadioSandboxWPF.ViewModel
             set { selectedDevice = value; RaisePropertyChanged("SelectedDevice"); }
         }
 
-        public List<string> FftSizes
+        public List<int> FftSizes
         {
             get => fftSizes;
             set { fftSizes = value; RaisePropertyChanged("FftSizes"); }
         }
 
-        public string SelectedFftSize
+        public int SelectedFftSize
         {
             get => selectedFftSize;
-            set { selectedFftSize = value; RaisePropertyChanged("SelectedFftSize"); }
+            set 
+            { 
+                selectedFftSize = value;
+                StartListening();
+                RaisePropertyChanged("SelectedFftSize"); 
+            }
         }
 
         public bool Decibels
