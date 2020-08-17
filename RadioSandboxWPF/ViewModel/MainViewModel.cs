@@ -16,6 +16,8 @@ namespace RadioSandboxWPF.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
+        private const int LEGEND_WIDTH = 75;
+
         private Spectrogram.Spectrogram spec;
         private Listener listener;
 
@@ -61,20 +63,16 @@ namespace RadioSandboxWPF.ViewModel
 
             //Setup FFT size
             FftSizes = new List<int>() { 512, 1024, 2048, 4096, 8192, 16384, 32768 };
-            selectedFftSize = FftSizes[1];
+            SelectedFftSize = FftSizes[1];
 
             ColorMaps = Colormap.GetColormaps().ToList();
             SelectedColorMap = ColorMaps.Where(c => c.Name == "Viridis").FirstOrDefault();
+            Brightness = 5;
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(100);
             timer.IsEnabled = true;
             timer.Tick += Timer_Tick;
-
-            Brightness = 5;
-
-            //TODO: move this somewhere else?
-            StartListening();
             timer.Start();
         }
 
@@ -122,24 +120,32 @@ namespace RadioSandboxWPF.ViewModel
             SpectrogramHeight = spec.Height;
 
             VerticalScaleImageSource = null;
-            VerticalScaleImageSource = ImageHelpers.BitmapToImageSource(spec.GetVerticalScale(75)); //TODO: not hardcode the wid
+            VerticalScaleImageSource = ImageHelpers.BitmapToImageSource(spec.GetVerticalScale(LEGEND_WIDTH)); 
         }
 
         private void StartListening()
         {
-            int sampleRate = 6000;
-            int fftSize = SelectedFftSize;
-            int stepSize = fftSize / 20;
+            try
+            {
+                int sampleRate = 6000;
+                int fftSize = SelectedFftSize;
+                int stepSize = fftSize / 20;
 
-            SpectrogamImageSource = null;
-            listener?.Dispose();
-            listener = new Listener(0, sampleRate); //TODO: support changes to devices... cbDevice.SelectedIndex, sampleRate);
-            spec = new Spectrogram.Spectrogram(sampleRate, fftSize, stepSize);
-            spec.SetWindow(FftSharp.Window.Rectangular(fftSize));
-            SpectrogramHeight = spec.Height;
+                SpectrogamImageSource = null;
+                listener?.Dispose();
+                listener = new Listener(DeviceCapabilities.IndexOf(selectedDevice), sampleRate);
 
-            VerticalScaleImageSource = null;
-            VerticalScaleImageSource = ImageHelpers.BitmapToImageSource(spec.GetVerticalScale(75)); //TODO: not hardcode the width
+                spec = new Spectrogram.Spectrogram(sampleRate, fftSize, stepSize);
+                spec.SetWindow(FftSharp.Window.Rectangular(fftSize));
+                SpectrogramHeight = spec.Height;
+
+                VerticalScaleImageSource = null;
+                VerticalScaleImageSource = ImageHelpers.BitmapToImageSource(spec.GetVerticalScale(LEGEND_WIDTH));
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Exeption when attempting to start to listen: " + ex.Message);
+            }
         }
 
         public List<WaveInCapabilities> DeviceCapabilities
@@ -151,7 +157,12 @@ namespace RadioSandboxWPF.ViewModel
         public WaveInCapabilities SelectedDevice
         {
             get => selectedDevice;
-            set { selectedDevice = value; RaisePropertyChanged("SelectedDevice"); }
+            set 
+            { 
+                selectedDevice = value;
+                StartListening();
+                RaisePropertyChanged("SelectedDevice"); 
+            }
         }
 
         public List<int> FftSizes
