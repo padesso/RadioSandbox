@@ -21,7 +21,6 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Vertical"
@@ -68,6 +67,10 @@
                       Content="Roll?"
                       IsChecked="{Binding Roll}"/>
 
+            <Slider x:Name="brightnessSld"
+                    Minimum="1" Maximum="20"
+                    Value="{Binding Brightness}"/>
+
         </StackPanel>
 
         <Grid 
@@ -76,7 +79,7 @@
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="75"/>
+                <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
             
             <Image x:Name="spectrogramImage" 
@@ -86,7 +89,6 @@
 
             <Image x:Name="verticalScaleImage"  
                    Grid.Row="0"  Grid.Column="2"
-                   Width="75"
                     Height="{Binding SpectrogramHeight}"
                     Source="{Binding VerticalScaleImageSource}"/>
         </Grid>

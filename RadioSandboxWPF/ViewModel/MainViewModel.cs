@@ -32,6 +32,7 @@ namespace RadioSandboxWPF.ViewModel
         private bool decibels;
         private bool roll;
 
+        private int brightness;
         private int spectrogramHeight;
         private ImageSource spectrogamImageSource;
         private ImageSource verticalScaleImageSource;
@@ -70,6 +71,8 @@ namespace RadioSandboxWPF.ViewModel
             timer.IsEnabled = true;
             timer.Tick += Timer_Tick;
 
+            Brightness = 5;
+
             //TODO: move this somewhere else?
             StartListening();
             timer.Start();
@@ -80,7 +83,8 @@ namespace RadioSandboxWPF.ViewModel
             double[] newAudio = listener.GetNewAudio();
             spec.Add(newAudio, process: false);
 
-            double multiplier = 10 / 20.0; //TODO: tbBrightness.Value / 20.0;
+            double multiplier = Brightness / 20.0; 
+
 
             if (spec.FftsToProcess > 0)
             {
@@ -211,7 +215,12 @@ namespace RadioSandboxWPF.ViewModel
         public Colormap SelectedColorMap 
         { 
             get => selectedColorMap;
-            set { selectedColorMap = value; RaisePropertyChanged("SelectedColorMap"); }
+            set { 
+                selectedColorMap = value; 
+                if(spec != null)
+                    spec.SetColormap(selectedColorMap); 
+                RaisePropertyChanged("SelectedColorMap"); 
+            }
         }
 
         public List<Colormap> ColorMaps 
@@ -236,6 +245,12 @@ namespace RadioSandboxWPF.ViewModel
         { 
             get => spectrogramHeight;
             set { spectrogramHeight = value; RaisePropertyChanged("SpectrogramHeight"); }
+        }
+
+        public int Brightness 
+        { 
+            get => brightness;
+            set { brightness = value; RaisePropertyChanged("Brightness"); }
         }
     }
 }
