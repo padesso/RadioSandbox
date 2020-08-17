@@ -80,14 +80,14 @@ namespace RadioSandboxWPF.ViewModel
             double[] newAudio = listener.GetNewAudio();
             spec.Add(newAudio, process: false);
 
-            double multiplier = 1 / 20.0; //TODO: tbBrightness.Value / 20.0;
+            double multiplier = 10 / 20.0; //TODO: tbBrightness.Value / 20.0;
 
             if (spec.FftsToProcess > 0)
             {
                 Stopwatch sw = Stopwatch.StartNew();
                 spec.Process();
                 //if (SpectrogamImageSource != null)
-                spec.SetFixedWidth(500);// (int)SpectrogamImageSource.Width); 
+                spec.SetFixedWidth(512);// (int)SpectrogamImageSource.Width); 
 
                 Bitmap bmpSpec = new Bitmap(spec.Width, spec.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
                 using (var bmpSpecIndexed = spec.GetBitmap(multiplier, Decibels, Roll))
@@ -97,7 +97,7 @@ namespace RadioSandboxWPF.ViewModel
                     gfx.DrawImage(bmpSpecIndexed, 0, 0);
                     if (Roll)
                     {
-                        gfx.DrawLine(pen, spec.NextColumnIndex, 0, spec.NextColumnIndex, (int)SpectrogamImageSource.Height);
+                        gfx.DrawLine(pen, spec.NextColumnIndex, 0, spec.NextColumnIndex, SpectrogramHeight);
                     }
                 }
                 sw.Stop();
@@ -115,6 +115,11 @@ namespace RadioSandboxWPF.ViewModel
 
             //Default max on the progressbar is 100 so hardcoding it here for now
             Amplitude = (int)(listener.AmplitudeFrac * 100);
+
+            SpectrogramHeight = spec.Height;
+
+            VerticalScaleImageSource = null;
+            VerticalScaleImageSource = ImageHelpers.BitmapToImageSource(spec.GetVerticalScale(75)); //TODO: not hardcode the wid
         }
 
         private void StartListening()
