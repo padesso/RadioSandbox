@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using NAudio.Wave;
+using RadioSandboxLibrary.Decoding.Morse;
 using RadioSandboxWPF.Helpers;
 using Spectrogram;
 using System;
@@ -48,6 +49,8 @@ namespace RadioSandboxWPF.ViewModel
 
         private string decodedText;
 
+        MorseDecoder morseDecoder;
+
         public MainViewModel()
         {
             //Setup the audio input
@@ -77,15 +80,20 @@ namespace RadioSandboxWPF.ViewModel
             timer.Tick += Timer_Tick;
             timer.Start();
 
-            //TEST DATA
+            //Initial decoded data
             DecodedText = "Decoded text...";
+            morseDecoder = new MorseDecoder(); 
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
             double[] newAudio = listener.GetNewAudio();
-            spec.Add(newAudio, process: false);
 
+            //Decoders
+            DecodedText = morseDecoder.Decode(newAudio);
+
+            //Spectrogram
+            spec.Add(newAudio, process: false);
             double multiplier = Brightness / 20.0; 
 
             if (spec.FftsToProcess > 0)
@@ -273,7 +281,7 @@ namespace RadioSandboxWPF.ViewModel
         public string DecodedText 
         { 
             get => decodedText;
-            set { decodedText = value; RaisePropertyChanged("MorseCodeText"); }
+            set { decodedText = value; RaisePropertyChanged("DecodedText"); }
         }
     }
 }
