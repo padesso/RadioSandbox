@@ -46,6 +46,8 @@ namespace RadioSandboxWPF.ViewModel
 
         private int amplitude;
 
+        private string decodedText;
+
         public MainViewModel()
         {
             //Setup the audio input
@@ -74,6 +76,9 @@ namespace RadioSandboxWPF.ViewModel
             timer.IsEnabled = true;
             timer.Tick += Timer_Tick;
             timer.Start();
+
+            //TEST DATA
+            DecodedText = "Decoded text...";
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -263,6 +268,12 @@ namespace RadioSandboxWPF.ViewModel
         { 
             get => brightness;
             set { brightness = value; RaisePropertyChanged("Brightness"); }
+        }
+
+        public string DecodedText 
+        { 
+            get => decodedText;
+            set { decodedText = value; RaisePropertyChanged("MorseCodeText"); }
         }
     }
 }
