@@ -13,8 +13,8 @@ namespace RadioSandboxLibrary.Decoding.Morse
 
         private double centerFrequency;
 
-        private const int BUFFER_LENGTH = 44100;
-        private CircularBuffer signalBuffer = new CircularBuffer(1024);
+        private const int BUFFER_LENGTH = 44100; //Approximately 1 second worth of samples
+        private CircularBuffer signalBuffer;
 
         private double timeUnitLength;
         private int dotLengthMultiple = 1;
@@ -46,11 +46,32 @@ namespace RadioSandboxLibrary.Decoding.Morse
             }
             else
             {
-                //TODO
-                decodedString.Append("new morse data... ");
+                byte[] currentBytes = new byte[signalBuffer.Count];
+                signalBuffer.Read(currentBytes, 0, signalBuffer.Count);
+
+                timeUnitLength = CalculateUnitLength(currentBytes);
+                string currentMessage = DecodeMessage(timeUnitLength, currentBytes);
+
+                decodedString.Append(currentMessage);
             }
 
             return DecodedString;
+        }
+
+        private string DecodeMessage(double timeUnitLength, byte[] currentBytes)
+        {
+            //TODO: now that we know how the time unit, let's get a message
+            string currentMessage = "";
+
+            return currentMessage;
+        }
+
+        private double CalculateUnitLength(byte[] currentBytes)
+        {
+            //TODO: iterate through the bytes and find the unit length
+            double tempUnitLength = -1;
+
+            return tempUnitLength;
         }
 
         public string DecodedString { get => decodedString.ToString(); }
