@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NAudio.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,8 +11,10 @@ namespace RadioSandboxLibrary.Decoding.Morse
     {
         private StringBuilder decodedString;
 
-        private double[] signalBuffer;
-        private int bufferPointer = 0;
+        private double centerFrequency;
+
+        private const int BUFFER_LENGTH = 44100;
+        private CircularBuffer signalBuffer = new CircularBuffer(1024);
 
         private double timeUnitLength;
         private int dotLengthMultiple = 1;
@@ -23,26 +26,34 @@ namespace RadioSandboxLibrary.Decoding.Morse
         public MorseDecoder()
         {
             decodedString = new StringBuilder();
-            signalBuffer = new double[44100];  //TODO: about a second of samples, maybe allow this to be set from UI?
+            signalBuffer = new CircularBuffer(BUFFER_LENGTH);
         }
 
         public string Decode(double[] signal)
         {
-            //Pack the current signal in to a buffer so we can look back
-            for(int i = 0; i < signal.Length; i++)
-            {
-                signalBuffer[bufferPointer + i] = signal[i];
-            }
-            bufferPointer += signal.Length;
-
-
-            decodedString.Append("new morse data... ");
-
             //TODO: process the signal and create text from it...  :)
+
+            //Pack the current signal in to a buffer so we can look back
+            for (int i = 0; i < signal.Length; i++)
+            {
+                signalBuffer.Write(BitConverter.GetBytes(signal[i]), 0, sizeof(double));
+            }
+
+            if(signalBuffer.Count < signalBuffer.MaxLength)
+            {
+                decodedString.Clear();
+                decodedString.Append("Analyzing...");
+            }
+            else
+            {
+                //TODO
+                decodedString.Append("new morse data... ");
+            }
 
             return DecodedString;
         }
 
         public string DecodedString { get => decodedString.ToString(); }
+        public double CenterFrequency { get => centerFrequency; set => centerFrequency = value; }
     }
 }
