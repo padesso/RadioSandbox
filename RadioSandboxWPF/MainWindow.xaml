@@ -20,6 +20,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="125"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="150"/>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Vertical"
@@ -72,34 +73,33 @@
 
         </StackPanel>
 
-        <Grid 
-            Grid.Row="1" 
+        <ScrollViewer Grid.Row="1" 
             Grid.Column="0" Grid.ColumnSpan="5">
+            <Grid>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="85"/>
-                <ColumnDefinition Width="85"/>
-            </Grid.ColumnDefinitions>
-            
-            <Image x:Name="spectrogramImage" 
-                    Grid.Row="0"  Grid.Column="0"
-                    Height="{Binding SpectrogramHeight}"
-                    Source="{Binding SpectrogamImageSource}"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="85"/>
+                    <ColumnDefinition Width="85"/>
+                </Grid.ColumnDefinitions>
 
-            <Image x:Name="verticalScaleImage"  
-                   Grid.Row="0"  Grid.Column="1"
-                    Height="{Binding SpectrogramHeight}"
-                    Source="{Binding VerticalScaleImageSource}"/>
+                <Image x:Name="spectrogramImage" 
+                        Grid.Row="0"  Grid.Column="0"
+                        Height="{Binding SpectrogramHeight}"
+                        Source="{Binding SpectrogamImageSource}"/>
 
-            <ProgressBar x:Name="amplitudePB"
-                    Grid.Row="0" Grid.Column="2" 
-                    Orientation="Vertical"
-                         Height="{Binding SpectrogramHeight}"
-                    Value="{Binding Amplitude}"/>
-        </Grid>
+                <Image x:Name="verticalScaleImage"  
+                       Grid.Row="0"  Grid.Column="1"
+                        Height="{Binding SpectrogramHeight}"
+                        Source="{Binding VerticalScaleImageSource}"/>
 
+                <ProgressBar x:Name="amplitudePB"
+                        Grid.Row="0" Grid.Column="2" 
+                        Orientation="Vertical"
+                             Height="{Binding SpectrogramHeight}"
+                        Value="{Binding Amplitude}"/>
+            </Grid>
+        </ScrollViewer>
         
-
     </Grid>
 </Window>
