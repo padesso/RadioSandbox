@@ -9,12 +9,13 @@ namespace RadioSandboxLibrary.Decoding.Morse
 {
     public class MorseDecoder : IDecoder
     {
+        private int sRate;
+        private const int BUFFER_LENGTH = 44100; //1 second worth of samples
+        private CircularBuffer signalBuffer;
+
         private StringBuilder decodedString;
 
         private double centerFrequency;
-
-        private const int BUFFER_LENGTH = 44100; //Approximately 1 second worth of samples
-        private CircularBuffer signalBuffer;
 
         private double timeUnitLength;
         private int dotLengthMultiple = 1;
@@ -23,8 +24,9 @@ namespace RadioSandboxLibrary.Decoding.Morse
         private int interCharacterMultiple = 3;
         private int interWordMultiple = 7;
 
-        public MorseDecoder()
+        public MorseDecoder(int sampleRate)
         {
+            sRate = sampleRate;
             decodedString = new StringBuilder();
             signalBuffer = new CircularBuffer(BUFFER_LENGTH);
         }

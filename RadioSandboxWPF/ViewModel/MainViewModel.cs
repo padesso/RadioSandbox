@@ -82,7 +82,7 @@ namespace RadioSandboxWPF.ViewModel
 
             //Initial decoded data
             DecodedText = "Decoded text...";
-            morseDecoder = new MorseDecoder(); 
+            morseDecoder = new MorseDecoder(listener.SampleRate); 
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -140,7 +140,7 @@ namespace RadioSandboxWPF.ViewModel
         {
             try
             {
-                int sampleRate = 6000;
+                int sampleRate = 44100;
                 int fftSize = SelectedFftSize;
                 int stepSize = fftSize / 20;
 
