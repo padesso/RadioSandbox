@@ -10,7 +10,8 @@ namespace RadioSandboxLibrary.Decoding.Morse
     public class MorseDecoder : IDecoder
     {
         private int sRate;
-        private const int BUFFER_LENGTH = 44100; //1 second worth of samples
+        private int bufferLength;
+        private double secondsPerSample;
         private CircularBuffer signalBuffer;
 
         private StringBuilder decodedString;
@@ -27,8 +28,11 @@ namespace RadioSandboxLibrary.Decoding.Morse
         public MorseDecoder(int sampleRate)
         {
             sRate = sampleRate;
+            bufferLength = sRate;
+            secondsPerSample = 1.0 / sampleRate;
+
             decodedString = new StringBuilder();
-            signalBuffer = new CircularBuffer(BUFFER_LENGTH);
+            signalBuffer = new CircularBuffer(bufferLength);
         }
 
         public string Decode(double[] signal)
