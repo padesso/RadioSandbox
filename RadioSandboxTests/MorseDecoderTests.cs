@@ -35,22 +35,42 @@ namespace RadioSandboxTests
             //Load wav file contianing morse code, tone is 1000Hz
             (int sampleRate, double[] audio) = WavFile.ReadMono(@"Media\LS2-beacon.wav");
 
+            //Create the spectrogram to process the sample file
             Spectrogram.Spectrogram spec = new Spectrogram.Spectrogram(
                 sampleRate,
                 2048,
-                2048 / 16); //TODO: better defaults
+                128); //TODO: better defaults
 
+            //Do the processing
             spec.Add(audio, process: false);
             double[][] fftsProcessed = spec.Process();
 
-            //TODO: iterate through the samples and process FFT
-            for (int processedIndex = 0; processedIndex < fftsProcessed.Length; processedIndex++)
+            //Setup some filtering data
+            float centerFrequency = 1000f; //Toner freq in Hz
+            int centerBandIndex = (int)((centerFrequency / (spec.FreqMax - spec.FreqMin)) * fftsProcessed[0].Length) - 1;
+
+            bool isHigh = false;
+            int risingEdges = 0;
+            int fallingEdges = 0;
+
+            //Iiterate through the processed data in the frequency bands we care about and decode morse
+            //TODO: include the side bands
+            for (int sampleIndex = 0; sampleIndex < fftsProcessed[centerBandIndex].Length; sampleIndex++)
             {
-                for (int sampleIndex = 0; sampleIndex < fftsProcessed[processedIndex].Length; sampleIndex++)
+                if(fftsProcessed[centerBandIndex][sampleIndex] > 0.1) //TODO: better thresholds
                 {
-                    if(fftsProcessed[processedIndex][sampleIndex] > 1)
+                    if (!isHigh)
                     {
-                        Console.WriteLine("Found a reading: " + fftsProcessed[processedIndex][sampleIndex]);
+                        risingEdges++;
+                        isHigh = true;
+                    }                   
+                }
+                else
+                {
+                    if (isHigh)
+                    {
+                        fallingEdges++;
+                        isHigh = false;
                     }
                 }
             }
