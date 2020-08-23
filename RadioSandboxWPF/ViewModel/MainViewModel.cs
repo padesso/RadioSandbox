@@ -68,14 +68,14 @@ namespace RadioSandboxWPF.ViewModel
 
             //Setup FFT size
             FftSizes = new List<int>() { 512, 1024, 2048, 4096, 8192, 16384, 32768 };
-            SelectedFftSize = FftSizes[1];
+            SelectedFftSize = FftSizes[2];
 
             ColorMaps = Colormap.GetColormaps().ToList();
             SelectedColorMap = ColorMaps.Where(c => c.Name == "Viridis").FirstOrDefault();
             Brightness = 5;
 
             timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(100);
+            timer.Interval = TimeSpan.FromMilliseconds(50);
             timer.IsEnabled = true;
             timer.Tick += Timer_Tick;
             timer.Start();
