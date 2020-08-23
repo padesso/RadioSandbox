@@ -6,6 +6,6 @@ namespace RadioSandboxLibrary.Decoding
 {
     public interface IDecoder
     {
-        string Decode(short[] signal);
+        string Decode(double[][] signal);
     }
 }

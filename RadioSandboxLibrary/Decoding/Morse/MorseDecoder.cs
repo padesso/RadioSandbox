@@ -30,20 +30,21 @@ namespace RadioSandboxLibrary.Decoding.Morse
         private int interCharacterMultiple = 3;
         private int interWordMultiple = 7;
 
-        public MorseDecoder(int sampleRate)
+        public MorseDecoder(int sampleRate) 
         {
+            //TODO: this approach to timing doesn't work when looking at fft data, need to figure that out
             sRate = sampleRate;
             bufferLength = sRate;
             secondsPerSample = 1.0 / sampleRate;
 
-            centerFrequency = 15.0f; //TODO: use a real default value
+            centerFrequency = 400f; //TODO: adjustable via UI; preferably from clicking on spectrogram
             cwFilter = BiQuadFilter.BandPassFilterConstantPeakGain(sampleRate, centerFrequency, 1.0f);
 
             decodedString = new StringBuilder();
             signalBuffer = new CircularBuffer(bufferLength);
         }
 
-        public string Decode(short[] signal)
+        public string Decode(double[][] signal)
         {
             //TODO: filter, then process the signal and create text from it...  :)
 
@@ -71,7 +72,7 @@ namespace RadioSandboxLibrary.Decoding.Morse
             return DecodedString;
         }
 
-        private string DecodeMessage(double timeUnitLength, short[] curretnSamples)
+        private string DecodeMessage(double timeUnitLength, double[][] currentSamples)
         {
             //TODO: now that we know how the time unit, let's get a message
             string currentMessage = "";
@@ -79,9 +80,8 @@ namespace RadioSandboxLibrary.Decoding.Morse
             return currentMessage;
         }
 
-        private double CalculateUnitLength(short[] currentSamples)
-        {
-            short highThreshold = (short)(currentSamples.Max() * HIGH_SIGNAL_THRESHOLD_PCT);
+        private double CalculateUnitLength(double[][] currentSamples)
+        { 
             bool isHigh = false;
 
             //TODO: iterate through the bytes and find the unit length
@@ -89,35 +89,8 @@ namespace RadioSandboxLibrary.Decoding.Morse
             List<int> peakStartIndices = new List<int>();
             List<int> peakEndIndices = new List<int>();
 
-            //TODO: walk through and find rising edges
-            double lastSample = 0;
-            for (int index = 0; index < currentSamples.Length; index += 2)
-            {
-                var sample = currentSamples[index];
-                // absolute value 
-                if (sample < 0) 
-                    sample = (short)-sample;
-
-                //Find the peaks
-                if (sample > highThreshold) //High
-                {
-                    if (!isHigh)
-                    {
-                        isHigh = true;
-                        peakStartIndices.Add(index);
-                    }
-                }
-                else if (sample < FALLING_EDGE_THRESHOLD)//Low
-                {
-                    if (isHigh)
-                    {
-                        isHigh = false;
-                        peakEndIndices.Add(index);
-                    }
-                }
-
-                lastSample = sample;
-            }
+            //TODO: walk through the specified frequency and bands in specified bandwith and find rising and falling edges
+            
 
             return tempUnitLength;
         }

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="NAudio" Version="1.10.0" />
+    <PackageReference Include="Spectrogram" Version="1.2.5" />
   </ItemGroup>
 
 </Project>
