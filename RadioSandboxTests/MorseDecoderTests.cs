@@ -76,8 +76,9 @@ namespace RadioSandboxTests
                 }
             }
 
-            MorseDecoder morseDecoder = new MorseDecoder(sampleRate);
-            string decodedText = morseDecoder.Decode(fftsProcessed);
+            //The sample audio should rise and fall 12 times each
+            Assert.AreEqual(12, risingEdges);
+            Assert.AreEqual(12, fallingEdges);
         }
     }
 }
