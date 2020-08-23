@@ -39,26 +39,25 @@ namespace RadioSandboxTests
             //Create the spectrogram to process the sample file
             Spectrogram.Spectrogram spec = new Spectrogram.Spectrogram(
                 sampleRate,
-                2048,
-                128); //TODO: better defaults
+                1024,
+                32); //TODO: better defaults
 
             //Do the processing
             spec.Add(audio, process: false);
             double[][] fftsProcessed = spec.Process();
 
             //Setup some filtering data
-            float centerFrequency = 1000f; //Toner freq in Hz
+            float centerFrequency = 1500f; //Toner freq in Hz
             int centerBandIndex = (int)((centerFrequency / (spec.FreqMax - spec.FreqMin)) * fftsProcessed[0].Length) - 1;
 
             bool isHigh = false;
             int risingEdges = 0;
             int fallingEdges = 0;
 
-            //Iiterate through the processed data in the frequency bands we care about and decode morse
-            //TODO: include the side bands
+            //Iiterate through the processed data in the frequency bands we care about and decode morse //TODO: include the side bands
             for (int processedIndex = 0; processedIndex < fftsProcessed.Length; processedIndex++) //Iterate all readings
             {
-                if (fftsProcessed[processedIndex][centerBandIndex] > 0.5) //TODO: better thresholds
+                if (fftsProcessed[processedIndex][centerBandIndex] > 0.4) //TODO: better thresholds
                 {
                     if (!isHigh)
                     {
