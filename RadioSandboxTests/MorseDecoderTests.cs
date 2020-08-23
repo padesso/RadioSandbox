@@ -3,6 +3,7 @@ using NAudio.Wave;
 using RadioSandboxLibrary.Decoding.Morse;
 using Spectrogram;
 using System;
+using System.Reflection;
 
 namespace RadioSandboxTests
 {
@@ -55,15 +56,15 @@ namespace RadioSandboxTests
 
             //Iiterate through the processed data in the frequency bands we care about and decode morse
             //TODO: include the side bands
-            for (int sampleIndex = 0; sampleIndex < fftsProcessed[centerBandIndex].Length; sampleIndex++)
+            for (int processedIndex = 0; processedIndex < fftsProcessed.Length; processedIndex++) //Iterate all readings
             {
-                if(fftsProcessed[centerBandIndex][sampleIndex] > 0.1) //TODO: better thresholds
+                if (fftsProcessed[processedIndex][centerBandIndex] > 0.5) //TODO: better thresholds
                 {
                     if (!isHigh)
                     {
                         risingEdges++;
                         isHigh = true;
-                    }                   
+                    }
                 }
                 else
                 {
