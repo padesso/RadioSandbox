@@ -10,8 +10,8 @@ namespace RadioSandboxLibrary.Decoding.Morse
 {
     public class MorseDecoder : IDecoder
     {
-        private const float RISING_EDGE_THRESHOLD = 8000f; //TODO: use better values
-        private const float FALLING_EDGE_THRESHOLD = 2000f; //TODO: use better values
+        private const float RISING_EDGE_THRESHOLD = 0.9f; //TODO: use better values
+        private const float FALLING_EDGE_THRESHOLD = 0.05f; //TODO: use better values
 
         private int sRate;
         private int bufferLength;
@@ -45,7 +45,7 @@ namespace RadioSandboxLibrary.Decoding.Morse
 
         public string Decode(double[] signal)
         {
-            //TODO: process the signal and create text from it...  :)
+            //TODO: filter, then process the signal and create text from it...  :)
 
             //Pack the current signal in to a buffer so we can look back
             for (int i = 0; i < signal.Length; i++)
@@ -89,6 +89,7 @@ namespace RadioSandboxLibrary.Decoding.Morse
             float lastReading = 0;
             for (int index = 0; index < currentBytes.Length; index += 2)
             {
+                //TODO: this is not working properly...  Conversion issue?
                 short sample = (short)((currentBytes[index + 1] << 8) |
                                         currentBytes[index + 0]);
                 // to floating point
@@ -103,6 +104,8 @@ namespace RadioSandboxLibrary.Decoding.Morse
                     if(sample32 > RISING_EDGE_THRESHOLD)
                     {
                         //TODO
+                        if(sample32 > 1)
+                            Console.WriteLine("Rising edge");
                     }
                 }
                 else if (sample32 < lastReading) //Falling
@@ -110,6 +113,7 @@ namespace RadioSandboxLibrary.Decoding.Morse
                     if (sample32 < FALLING_EDGE_THRESHOLD)
                     {
                         //TODO
+                        Console.WriteLine("Falling edge");
                     }
                 }
                 else
