@@ -10,8 +10,8 @@ namespace RadioSandboxLibrary.Decoding.Morse
 {
     public class MorseDecoder : IDecoder
     {
-        private const short RISING_EDGE_THRESHOLD = 15000; //TODO: use better values
-        private const short FALLING_EDGE_THRESHOLD = 1000; //TODO: use better values
+        private const short FALLING_EDGE_THRESHOLD = 50; //TODO: use better values
+        private const float HIGH_SIGNAL_THRESHOLD_PCT = 0.9f;
 
         private int sRate;
         private int bufferLength;
@@ -48,23 +48,25 @@ namespace RadioSandboxLibrary.Decoding.Morse
             //TODO: filter, then process the signal and create text from it...  :)
 
             //Pack the current signal in to a buffer so we can look back
-            for (int i = 0; i < signal.Length; i++)
-            {
-                signalBuffer.Write(BitConverter.GetBytes(signal[i]), 0, sizeof(short));
-            }
+            //for (int i = 0; i < signal.Length; i++)
+            //{
+            //    signalBuffer.Write(BitConverter.GetBytes(signal[i]), 0, sizeof(short));
+            //}
 
-            if(signalBuffer.Count < signalBuffer.MaxLength)
-            {
-                decodedString.Clear();
-                decodedString.Append("Analyzing...");
-            }
-            else
-            {
-                timeUnitLength = CalculateUnitLength(signal);
-                string currentMessage = DecodeMessage(timeUnitLength, signal);
+            //if(signalBuffer.Count < signalBuffer.MaxLength)
+            //{
+            //    decodedString.Clear();
+            //    decodedString.Append("Analyzing...");
+            //}
+            //else
+            //{
+            //    timeUnitLength = CalculateUnitLength(signal);
+            //    string currentMessage = DecodeMessage(timeUnitLength, signal);
 
-                decodedString.Append(currentMessage);
-            }
+            //    decodedString.Append(currentMessage);
+            //}
+
+            timeUnitLength = CalculateUnitLength(signal);
 
             return DecodedString;
         }
@@ -79,6 +81,7 @@ namespace RadioSandboxLibrary.Decoding.Morse
 
         private double CalculateUnitLength(short[] currentSamples)
         {
+            short highThreshold = (short)(currentSamples.Max() * HIGH_SIGNAL_THRESHOLD_PCT);
             bool isHigh = false;
 
             //TODO: iterate through the bytes and find the unit length
@@ -96,7 +99,7 @@ namespace RadioSandboxLibrary.Decoding.Morse
                     sample = (short)-sample;
 
                 //Find the peaks
-                if (sample > RISING_EDGE_THRESHOLD) //High
+                if (sample > highThreshold) //High
                 {
                     if (!isHigh)
                     {
