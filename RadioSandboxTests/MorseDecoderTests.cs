@@ -3,6 +3,7 @@ using NAudio.Wave;
 using RadioSandboxLibrary.Decoding.Morse;
 using Spectrogram;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace RadioSandboxTests
@@ -51,9 +52,10 @@ namespace RadioSandboxTests
             int centerBandIndex = (int)((centerFrequency / (spec.FreqMax - spec.FreqMin)) * fftsProcessed[0].Length) - 1;
 
             bool isHigh = false;
-            int risingEdges = 0;
-            int fallingEdges = 0;
+            List<int> risingEdgeIndices = new List<int>();
+            List<int> fallingEdgeIndices = new List<int>();
 
+            //TODO: this needs to average several bands...
             //Iiterate through the processed data in the frequency bands we care about and decode morse //TODO: include the side bands
             for (int processedIndex = 0; processedIndex < fftsProcessed.Length; processedIndex++) //Iterate all readings
             {
@@ -61,7 +63,7 @@ namespace RadioSandboxTests
                 {
                     if (!isHigh)
                     {
-                        risingEdges++;
+                        risingEdgeIndices.Add(processedIndex);
                         isHigh = true;
                     }
                 }
@@ -69,15 +71,25 @@ namespace RadioSandboxTests
                 {
                     if (isHigh)
                     {
-                        fallingEdges++;
+                        fallingEdgeIndices.Add(processedIndex);
                         isHigh = false;
                     }
                 }
             }
 
             //The sample audio should rise and fall 12 times each
-            Assert.AreEqual(12, risingEdges);
-            Assert.AreEqual(12, fallingEdges);
+            Assert.AreEqual(12, risingEdgeIndices.Count);
+            Assert.AreEqual(12, fallingEdgeIndices.Count);
+
+            //TODO: calculate some times
+            string decodedText = "";
+            List<double> highTimes = new List<double>();
+            for (int highIndex = 0; highIndex < risingEdgeIndices.Count; highIndex++)
+            {
+                highTimes.Add(Math.Abs(spec.SecPerPx * (risingEdgeIndices[highIndex] - fallingEdgeIndices[highIndex])));
+            }
+
+            Assert.AreEqual(decodedText, "LS2");
         }
     }
 }
