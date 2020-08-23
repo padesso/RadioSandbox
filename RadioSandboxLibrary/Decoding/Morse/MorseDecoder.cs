@@ -10,8 +10,8 @@ namespace RadioSandboxLibrary.Decoding.Morse
 {
     public class MorseDecoder : IDecoder
     {
-        private const float RISING_EDGE_THRESHOLD = 0.9f; //TODO: use better values
-        private const float FALLING_EDGE_THRESHOLD = 0.05f; //TODO: use better values
+        private const short RISING_EDGE_THRESHOLD = 15000; //TODO: use better values
+        private const short FALLING_EDGE_THRESHOLD = 1000; //TODO: use better values
 
         private int sRate;
         private int bufferLength;
@@ -43,14 +43,14 @@ namespace RadioSandboxLibrary.Decoding.Morse
             signalBuffer = new CircularBuffer(bufferLength);
         }
 
-        public string Decode(double[] signal)
+        public string Decode(short[] signal)
         {
             //TODO: filter, then process the signal and create text from it...  :)
 
             //Pack the current signal in to a buffer so we can look back
             for (int i = 0; i < signal.Length; i++)
             {
-                signalBuffer.Write(BitConverter.GetBytes(signal[i]), 0, sizeof(double));
+                signalBuffer.Write(BitConverter.GetBytes(signal[i]), 0, sizeof(short));
             }
 
             if(signalBuffer.Count < signalBuffer.MaxLength)
@@ -60,11 +60,8 @@ namespace RadioSandboxLibrary.Decoding.Morse
             }
             else
             {
-                byte[] currentBytes = new byte[signalBuffer.Count];
-                signalBuffer.Read(currentBytes, 0, signalBuffer.Count);
-
-                timeUnitLength = CalculateUnitLength(currentBytes);
-                string currentMessage = DecodeMessage(timeUnitLength, currentBytes);
+                timeUnitLength = CalculateUnitLength(signal);
+                string currentMessage = DecodeMessage(timeUnitLength, signal);
 
                 decodedString.Append(currentMessage);
             }
@@ -72,7 +69,7 @@ namespace RadioSandboxLibrary.Decoding.Morse
             return DecodedString;
         }
 
-        private string DecodeMessage(double timeUnitLength, byte[] currentBytes)
+        private string DecodeMessage(double timeUnitLength, short[] curretnSamples)
         {
             //TODO: now that we know how the time unit, let's get a message
             string currentMessage = "";
@@ -80,48 +77,43 @@ namespace RadioSandboxLibrary.Decoding.Morse
             return currentMessage;
         }
 
-        private double CalculateUnitLength(byte[] currentBytes)
+        private double CalculateUnitLength(short[] currentSamples)
         {
+            bool isHigh = false;
+
             //TODO: iterate through the bytes and find the unit length
             double tempUnitLength = -1;
+            List<int> peakStartIndices = new List<int>();
+            List<int> peakEndIndices = new List<int>();
 
             //TODO: walk through and find rising edges
-            float lastReading = 0;
-            for (int index = 0; index < currentBytes.Length; index += 2)
+            double lastSample = 0;
+            for (int index = 0; index < currentSamples.Length; index += 2)
             {
-                //TODO: this is not working properly...  Conversion issue?
-                short sample = (short)((currentBytes[index + 1] << 8) |
-                                        currentBytes[index + 0]);
-                // to floating point
-                var sample32 = sample / 32768f;
+                var sample = currentSamples[index];
                 // absolute value 
-                if (sample32 < 0) sample32 = -sample32;
-                // is this the max value?
-                //if (sample32 > max) max = sample32;
+                if (sample < 0) 
+                    sample = (short)-sample;
 
-                if(sample32 > lastReading) //Rising
+                //Find the peaks
+                if (sample > RISING_EDGE_THRESHOLD) //High
                 {
-                    if(sample32 > RISING_EDGE_THRESHOLD)
+                    if (!isHigh)
                     {
-                        //TODO
-                        if(sample32 > 1)
-                            Console.WriteLine("Rising edge");
+                        isHigh = true;
+                        peakStartIndices.Add(index);
                     }
                 }
-                else if (sample32 < lastReading) //Falling
+                else if (sample < FALLING_EDGE_THRESHOLD)//Low
                 {
-                    if (sample32 < FALLING_EDGE_THRESHOLD)
+                    if (isHigh)
                     {
-                        //TODO
-                        Console.WriteLine("Falling edge");
+                        isHigh = false;
+                        peakEndIndices.Add(index);
                     }
                 }
-                else
-                {
-                    //TODO: Not sure what we need to do here
-                }
 
-                lastReading = sample32;
+                lastSample = sample;
             }
 
             return tempUnitLength;

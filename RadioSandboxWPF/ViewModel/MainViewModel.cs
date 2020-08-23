@@ -90,7 +90,7 @@ namespace RadioSandboxWPF.ViewModel
             double[] newAudio = listener.GetNewAudio();
 
             //Decoders
-            DecodedText = morseDecoder.Decode(newAudio);
+            //DecodedText = morseDecoder.Decode(newAudio);
 
             //Spectrogram
             spec.Add(newAudio, process: false);

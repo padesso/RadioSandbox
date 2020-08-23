@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Media\ThisIsJustATestMorseCode.wav" />
+    <None Remove="Media\LS2-beacon.wav" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Media\ThisIsJustATestMorseCode.wav">
+    <Content Include="Media\LS2-beacon.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
