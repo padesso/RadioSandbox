@@ -66,17 +66,26 @@ namespace RadioSandboxTests
                 Assert.AreEqual(12, risingEdgeIndices.Count);
                 Assert.AreEqual(12, fallingEdgeIndices.Count);
 
-                //TODO: compare where rising/falling indices are in relation to total file and decode
-
-                //How many 
                 List<int> highLengths = new List<int>();
+                List<int> lowLengths = new List<int>();
 
-                //Figure out how many indices between rising and falling edges
-                //Assumes equal number of rising and falling edges - ie: we didn't start or end analyzing on a high edge
+                //Figure out how many indices between rising and falling edges for high times 
+                // and falling and next rising for times of spaces
+                //Assumes equal number of rising and falling edges 
+                //ie: we didn't start or end analyzing on a high edge
                 for (int risingEdgeIndex = 0; risingEdgeIndex < risingEdgeIndices.Count; risingEdgeIndex++)
                 {
                     highLengths.Add(fallingEdgeIndices[risingEdgeIndex] - risingEdgeIndices[risingEdgeIndex]);
+
+                    if(risingEdgeIndex < risingEdgeIndices.Count - 1)
+                        lowLengths.Add(risingEdgeIndices[risingEdgeIndex + 1] - fallingEdgeIndices[risingEdgeIndex]);
                 }
+
+                //Split the highest and lowest reading, and treat lower times as a low and higher times as low
+                //TODO: This needs to take into account another state where the space between words is a longer low
+                int medianReading = risingEdgeIndices.Max() / risingEdgeIndices.Min();
+
+
 
                 Console.WriteLine("wait");
                 
