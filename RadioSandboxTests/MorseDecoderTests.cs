@@ -1,9 +1,11 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NAudio.Wave;
 using RadioSandboxLibrary.Decoding.Morse;
+using RadioSandboxLibrary.Providers;
 using Spectrogram;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace RadioSandboxTests
@@ -17,18 +19,54 @@ namespace RadioSandboxTests
             //Load wav file contianing morse code
             using (WaveFileReader reader = new WaveFileReader(@"Media\LS2-beacon.wav"))
             {
-                //Assert.AreEqual(16, reader.WaveFormat.BitsPerSample, "Only works with 16 bit audio");
-                //byte[] buffer = new byte[reader.Length];
-                //int read = reader.Read(buffer, 0, buffer.Length);
-                //short[] sampleBuffer = new short[read];
-                //Buffer.BlockCopy(buffer, 0, sampleBuffer, 0, read);
+                int bytesPerSample = reader.WaveFormat.BitsPerSample / 8;
+                var samples = reader.Length / (bytesPerSample);
+                var stepSize = 128;
+                var width = 3200; //TODO: this should be figured based on some estimated max morse code speed
+  
+                //Apply RMS peak provider to only get smoothed curve
+                RmsPeakProvider rmsPeakProvider = new RmsPeakProvider(200); //TODO: get the right value here
+                rmsPeakProvider.Init(reader.ToSampleProvider(), stepSize);
 
-                //MorseDecoder morseDecoder = new MorseDecoder(reader.WaveFormat.SampleRate);
-                //string decodedText = morseDecoder.Decode(sampleBuffer);
+                //Get all the peaks into a list
+                int x = 0;
+                List<float> maxPeaks = new List<float>();
+                maxPeaks.Add(rmsPeakProvider.GetNextPeak().Max);
+                while (x < width)
+                {
+                    maxPeaks.Add(rmsPeakProvider.GetNextPeak().Max);
+                    x++;
+                }
 
-                ////TODO: manually decode the morse 
-                //Assert.AreEqual(decodedText, "I'm not sure what this text is...");
-            }  
+                //Edge detection
+                bool isHigh = false;
+                List<int> risingEdgeIndices = new List<int>();
+                List<int> fallingEdgeIndices = new List<int>();
+
+                for(int peakIndex = 0; peakIndex < maxPeaks.Count; peakIndex++)
+                {
+                    if(maxPeaks[peakIndex] > 0.2f)
+                    { 
+                        if (!isHigh)
+                        {
+                            isHigh = true;
+                            risingEdgeIndices.Add(peakIndex);
+                        }
+                    }
+                    else
+                    {
+                        if (isHigh)
+                        {
+                            fallingEdgeIndices.Add(peakIndex);
+                            isHigh = false;
+                        }
+                    }
+                }
+
+
+                var maxVal = maxPeaks.Max();
+                Console.WriteLine("wait");
+            }
         }
 
         [TestMethod]
@@ -37,6 +75,7 @@ namespace RadioSandboxTests
             //Load wav file contianing morse code, tone is 1000Hz
             (int sampleRate, double[] audio) = WavFile.ReadMono(@"Media\LS2-beacon.wav");
 
+            
             //Create the spectrogram to process the sample file
             Spectrogram.Spectrogram spec = new Spectrogram.Spectrogram(
                 sampleRate,
