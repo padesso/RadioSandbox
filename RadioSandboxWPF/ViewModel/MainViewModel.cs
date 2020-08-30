@@ -148,7 +148,7 @@ namespace RadioSandboxWPF.ViewModel
                 listener?.Dispose();
                 listener = new Listener(DeviceCapabilities.IndexOf(selectedDevice), sampleRate);
 
-                spec = new Spectrogram.Spectrogram(sampleRate, fftSize, stepSize);
+                spec = new Spectrogram.Spectrogram(sampleRate, fftSize, stepSize);                
                 spec.SetWindow(FftSharp.Window.Rectangular(fftSize));
                 SpectrogramHeight = spec.Height;
 
