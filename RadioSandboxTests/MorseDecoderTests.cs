@@ -65,6 +65,21 @@ namespace RadioSandboxTests
 
                 Assert.AreEqual(12, risingEdgeIndices.Count);
                 Assert.AreEqual(12, fallingEdgeIndices.Count);
+
+                //TODO: compare where rising/falling indices are in relation to total file and decode
+
+                //How many 
+                List<int> highLengths = new List<int>();
+
+                //Figure out how many indices between rising and falling edges
+                //Assumes equal number of rising and falling edges - ie: we didn't start or end analyzing on a high edge
+                for (int risingEdgeIndex = 0; risingEdgeIndex < risingEdgeIndices.Count; risingEdgeIndex++)
+                {
+                    highLengths.Add(fallingEdgeIndices[risingEdgeIndex] - risingEdgeIndices[risingEdgeIndex]);
+                }
+
+                Console.WriteLine("wait");
+                
             }
         }
 
