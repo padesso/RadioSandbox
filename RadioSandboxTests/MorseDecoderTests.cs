@@ -25,7 +25,7 @@ namespace RadioSandboxTests
                 var width = 3200; //TODO: this should be figured based on some estimated max morse code speed
   
                 //Apply RMS peak provider to only get smoothed curve
-                RmsPeakProvider rmsPeakProvider = new RmsPeakProvider(200); //TODO: get the right value here
+                RmsPeakProvider rmsPeakProvider = new RmsPeakProvider(256); //TODO: get the right value here
                 rmsPeakProvider.Init(reader.ToSampleProvider(), stepSize);
 
                 //Get all the peaks into a list
@@ -45,7 +45,7 @@ namespace RadioSandboxTests
 
                 for(int peakIndex = 0; peakIndex < maxPeaks.Count; peakIndex++)
                 {
-                    if(maxPeaks[peakIndex] > 0.2f)
+                    if(maxPeaks[peakIndex] > 0.2f) //TODO: expose this threshold to a UI
                     { 
                         if (!isHigh)
                         {
@@ -63,9 +63,8 @@ namespace RadioSandboxTests
                     }
                 }
 
-
-                var maxVal = maxPeaks.Max();
-                Console.WriteLine("wait");
+                Assert.AreEqual(12, risingEdgeIndices.Count);
+                Assert.AreEqual(12, fallingEdgeIndices.Count);
             }
         }
 
