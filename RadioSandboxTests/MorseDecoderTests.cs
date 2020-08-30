@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace RadioSandboxTests
 {
@@ -81,14 +82,43 @@ namespace RadioSandboxTests
                         lowLengths.Add(risingEdgeIndices[risingEdgeIndex + 1] - fallingEdgeIndices[risingEdgeIndex]);
                 }
 
+                //TODO: wrap this with outer loop for words but first need to find medians for letters and words
+
                 //Split the highest and lowest reading, and treat lower times as a low and higher times as low
                 //TODO: This needs to take into account another state where the space between words is a longer low
                 int medianReading = risingEdgeIndices.Max() / risingEdgeIndices.Min();
+                StringBuilder decodedMorse = new StringBuilder();
+                List<int> letterSpacingIndices = new List<int>();
 
+                //Find the indices of the spaces between the letters
+                for(int lowLengthIndex = 0; lowLengthIndex < lowLengths.Count; lowLengthIndex++)
+                {
+                    if (lowLengths[lowLengthIndex] > medianReading)
+                        letterSpacingIndices.Add(lowLengthIndex);
+                }
 
+                int lastSpaceIndex = 0;
+                foreach(int letterSpaceIndex in letterSpacingIndices)
+                {
+                    StringBuilder currentLetter = new StringBuilder();
+                    for(int highLengthIndex = lastSpaceIndex; highLengthIndex <= letterSpaceIndex; highLengthIndex++)
+                    {
+                        if (highLengths[highLengthIndex] < medianReading)
+                        {
+                            currentLetter.Append(".");
+                        }
+                        else
+                        {
+                            currentLetter.Append("-");
+                        }
+                    }
 
-                Console.WriteLine("wait");
-                
+                    lastSpaceIndex = letterSpaceIndex;
+
+                    decodedMorse.Append(MorseLookup.LookupMorse(currentLetter.ToString()));
+                }
+
+                Assert.AreEqual("LS2", decodedMorse.ToString());
             }
         }
 
