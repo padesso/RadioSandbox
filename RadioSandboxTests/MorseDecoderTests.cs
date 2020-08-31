@@ -94,14 +94,15 @@ namespace RadioSandboxTests
                 for(int lowLengthIndex = 0; lowLengthIndex < lowLengths.Count; lowLengthIndex++)
                 {
                     if (lowLengths[lowLengthIndex] > medianReading)
-                        letterSpacingIndices.Add(lowLengthIndex);
+                        letterSpacingIndices.Add(lowLengthIndex + 1);
                 }
+                letterSpacingIndices.Add(highLengths.Count);
 
                 int lastSpaceIndex = 0;
                 foreach(int letterSpaceIndex in letterSpacingIndices)
                 {
                     StringBuilder currentLetter = new StringBuilder();
-                    for(int highLengthIndex = lastSpaceIndex; highLengthIndex <= letterSpaceIndex; highLengthIndex++)
+                    for(int highLengthIndex = lastSpaceIndex; highLengthIndex < letterSpaceIndex; highLengthIndex++)
                     {
                         if (highLengths[highLengthIndex] < medianReading)
                         {
